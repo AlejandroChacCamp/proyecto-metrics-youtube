@@ -50,9 +50,8 @@ Por cada canal se extraen los 400 videos más recientes (excluyendo shorts
 y videos menores a 5 minutos) con las siguientes métricas:
 `timestamp`, `channelTitle`, `id`, `publishedAt`, `title`, `viewCount`, `likeCount`,
 `commentCount`, `duration`
-
 También se extraen la información de cada canal:
-  `title`, `subscriberCount`, `videoCount`, `viewCount`
+`title`, `subscriberCount`, `videoCount`, `viewCount`
 ---
 *Proyecto personal de aprendizaje como parte de la transición de Data Analyst
 hacia roles técnicos de datos. Desarrollado con método incremental:
