@@ -1,4 +1,4 @@
-# YouTube Channel Intelligence Dashboard
+# YouTube Niche Analyzer (MVP)
 
 Pipeline de datos end to end que extrae métricas de canales de YouTube,
 las transforma, almacena en SQL y visualiza en Power BI.
