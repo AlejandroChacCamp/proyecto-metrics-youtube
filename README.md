@@ -19,13 +19,15 @@ más engagement? ¿qué duración funciona mejor? ¿quién domina el nicho y por
 ## Plan de Desarrollo
 - [x] **Fase 1: Extracción** — YouTube API, paginación, manejo de errores, filtro de shorts
 - [x] **Fase 2: Transformación** — Limpieza y normalización con Pandas
-- [ ] **Fase 3: Almacenamiento** — Carga en SQL con actualización incremental
-- [ ] **Fase 4: Visualización** — Dashboard en Power BI + automatización con Task Scheduler
+- [x] **Fase 3: Almacenamiento** — Carga en SQL con actualización incremental
+- [ ] **Fase 4: Visualización** — Dashboard en Power BI
+- [ ] **Fase 5: Automatización** — Automatización con Task Scheduler
 
 ## Tecnologías
 - **Lenguaje:** Python (vía Anaconda)
 - **Editor:** Jupyter Notebook → VS Code
-- **Librerías:** `requests`, `isodate`, `pandas`, `sqlite3`, `os`, `time`, `datetime`
+- **Librerías:** `requests`, `isodate`, `pandas`, `os`, `time`, `datetime`, `psycopg2`
+- **Base de datos:** PostgreSQL, DBeaver
 - **Visualización:** Power BI
 - **API:** YouTube Data API v3
 
@@ -44,8 +46,14 @@ proyecto-metrics-youtube/
 │   │   ├── 01_obtener_datos.ipynb   # Script de extracción Fase 1
 │   │   ├── 02_Notebook_De_Pruebas.ipynb   # Borrador de pruebas
 │   │   ├── 03_Procesamiento_datos.ipynb   # Script de limpieza de datos Fase 2
+│   │   ├── 04_Carga_datos_Postgres.ipynb   # Script de carga de datos desde CSV a PostgreSQL
+│   │ 
+│   ├── sql/
+│   │   ├── schema.sql   # Creación de tablas, tipo de datos e índices
+│   │   ├── views.sql   # Centralización de la loica de negocio en 3 vistas
 │   │
 │   └── keys.txt                   # API keys (excluido via .gitignore)
+│
 │── .gitignore
 │
 └── README.md
@@ -67,6 +75,9 @@ métricas por videos:
 métricas por canal:
 `timestamp_canal`, `title`, `subscriberCount`, `videoCount`, `viewCount`
 
+## Almacenamiento de datos (Fase 3)
+En este punto se decidió estandarizar los nombres de las columnas a snake_case
+
 ## Decisiones de diseño y limitaciones
 
 ### Fase 1:
@@ -87,15 +98,44 @@ métricas por canal:
 
 ### Fase 2:
 #### Decisiones de diseño
-- duration original eliminada — duration_seconds suficiente para análisis y visualización
-- Transformaciones en Pandas, no en Power Query — Power BI queda solo para DAX y time intelligence
+- duration original eliminada — duration_seconds suficiente para análisis y visualización.
+- Transformaciones en Pandas, no en Power Query — Power BI queda solo para DAX y time intelligence.
 - nombre_dia con diccionario manual — independiente del locale del sistema
-- IQR aplicado a nivel de nicho (global), no por canal
-- canal se acumula por ejecución — cada fila es una snapshot con timestamp_canal
-- Extracción incremental delegada a Fase 3 — el pipeline actual extrae histórico completo
+- IQR aplicado a nivel de nicho (global), no por canal.
+- canal se acumula por ejecución — cada fila es una snapshot con timestamp_canal.
+- Extracción incremental delegada a Fase 3 — el pipeline actual extrae histórico completo.
 
 #### Limitaciones
 - Limitación documentada en código: alta dispersión entre canales hace el IQR global imperfecto; IQR por canal descartado por muestra insuficiente en La Historia De... (29 videos). Revisar en P2
+
+### Fase 3:
+#### Decisiones de diseño
+- Motor elegido: PostgreSQL sobre SQLite — alineación con stack de mercado y portabilidad futura.
+- Para la tabla videos: id de videos como PRIMARY KEY natural — inmutable, generado por YouTube.
+- Para la tabla canal_snapshots: Surrogate SERIAL como PK en canal_snapshots — evita fragilidad de PK compuesta por colisión de timestamps.
+- Índice compuesto sobre (channel_title, dia_semana, hora) en tabla videos — optimiza queries de la Página 4 del dashboard (heatmap).
+- Validaciones automáticas en el script de carga — conteo por canal, rango de fechas, nulos en columnas críticas.
+- Parser unificado de keys.txt entre Fase 1 y Fase 3 — configuración centralizada.
+- Encoding utf-8-sig en to_csv Fase 2 y read_csv Fase 3 — resuelve corrupción de caracteres especiales en español.
+- Tabla videos queda como snapshot más reciente, cada vez que se llame a la API esta tabla mostrará solo la información más reciente - ON CONFLICT ... DO UPDATE.
+- Tabla canales guarda historico, para esto se agrega ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, channel_title) - ON CONFLICT (tiempo_extraccion, channel_title) DO NOTHING.
+
+    **Vistas creadas:**
+- evolucion_mensual_canal — responde pregunta 5 (evolución mensual de suscriptores, videos y vistas por canal usando DATE_TRUNC sobre canal_snapshots)
+- momento_despegue — responde pregunta 6 (detecta incremento semanal de métricas usando LAG y CTE sobre canal_snapshots)
+- frecuencia_publicacion_crecimiento — responde pregunta 9 (cruza frecuencia de publicación de videos con crecimiento de suscriptores usando JOIN entre videos y canal_snapshots)
+
+
+#### Limitaciones
+- Se descarta la implementación de NLP para responder a las preguntas 3 y 10:
+
+        Pregunta 3: ¿Hay palabras en los títulos que se repiten en los videos más exitosos?
+
+        Pregunta 10: ¿Qué temas o formatos tienen alta demanda (engagement) pero poca oferta (pocos videos)
+
+- Esta limitación responde al costo de implementar NLP versus su utilidad para mi objetivo profesional, considerando que implementarlo podría tomarme en este momento un mes. Se reserva la implementación de este feature para una próxima iteración de este MVP
+
+- Las vistas usan datos desde el inicio del proyecto — no hay historia pre-Fase 1 en canal_snapshots
 
 ---
 *Proyecto personal de aprendizaje como parte de la transición de Data Analyst
