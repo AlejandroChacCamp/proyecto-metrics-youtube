@@ -48,7 +48,6 @@ video["engagement_rate"] = video.apply(
     lambda x: safe_div(x["likeCount"] + x["commentCount"], x["viewCount"]), axis=1
 )
 
-video.head()
 
 # Clasificación por nicho (IQR global).
 """ Limitación: alta dispersión entre canales — el concepto de "viral" 
@@ -64,19 +63,11 @@ IQR_global = Q3_global - Q1_global
 limite_inferior_global = Q1_global - 1.5 * IQR_global
 limite_superior_global = Q3_global + 1.5 * IQR_global
 
-normal = video[(video["viewCount"] >= limite_inferior_global) & (video["viewCount"] < limite_superior_global)]
-viral = video[video["viewCount"] > limite_superior_global]
-bajo = video[video["viewCount"] < limite_inferior_global]
-
 video["tipo_video"] = "normal"
 
 video.loc[video["viewCount"] > limite_superior_global, "tipo_video"] = "viral"
 video.loc[video["viewCount"] < limite_inferior_global, "tipo_video"] = "bajo"
 
-video["tipo_video"].value_counts()
-
-agrupado = video.groupby("channelTitle").viewCount.agg([min, max, "mean"])
-print(agrupado)
 
 canal = pd.read_csv(info_canal)
 
@@ -85,11 +76,3 @@ canal["timestamp_canal"] = pd.to_datetime(canal["timestamp_canal"], format="%Y-%
 
 video.to_csv(os.path.join(base_dir, "data", "info_videos_clean.csv"), index=False, encoding='utf-8-sig')
 canal.to_csv(os.path.join(base_dir, "data", "info_canales_clean.csv"), index=False, encoding='utf-8-sig')
-
-#video.info()
-#canal.info()
-
-#video.isnull().sum()
-#canal.isnull().sum()
-
-
