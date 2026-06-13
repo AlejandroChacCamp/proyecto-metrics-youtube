@@ -11,6 +11,7 @@ __pycache__/
 *$py.class
 .conda/
 .ipynb_checkpoints/
+*_final.py
 
 # --- SISTEMA ---
 Thumbs.db
