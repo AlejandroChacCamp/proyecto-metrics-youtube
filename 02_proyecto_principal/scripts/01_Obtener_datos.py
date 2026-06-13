@@ -67,27 +67,25 @@ for handle in HANDLE:
 
     channel_url = "https://www.googleapis.com/youtube/v3/channels"
 
-    respuesta = requests.get(channel_url, params = params)
+    respuesta = hacer_peticion(channel_url, params = params)
 
-    if respuesta.status_code != 200:
-        print(f"Error HTTP: {respuesta.status_code}")
+    if respuesta is None:
+        print(f"Error crítico: no se pudo obtener datos del canal {handle} después de reintentos.")
         exit(1)
 
-    data = respuesta.json()
-
-    if not data.get("items"):
+    if not respuesta.get("items"):
         print("El canal no existe o no tiene datos públicos.")
         exit(1)
 
-    uploads_playlist_id = data["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
+    uploads_playlist_id = respuesta["items"][0]["contentDetails"]["relatedPlaylists"]["uploads"]
     #print(uploads_playlist_id)
 
     detalle_canal = {}
     detalle_canal["timestamp_canal"] = timestamp_canal
-    detalle_canal["title"] = data["items"][0]["snippet"]["title"]
-    detalle_canal["subscriberCount"] = data["items"][0]["statistics"]["subscriberCount"]
-    detalle_canal["videoCount"] = data["items"][0]["statistics"]["videoCount"]
-    detalle_canal["viewCount"] = data["items"][0]["statistics"]["viewCount"]
+    detalle_canal["title"] = respuesta["items"][0]["snippet"]["title"]
+    detalle_canal["subscriberCount"] = respuesta["items"][0]["statistics"]["subscriberCount"]
+    detalle_canal["videoCount"] = respuesta["items"][0]["statistics"]["videoCount"]
+    detalle_canal["viewCount"] = respuesta["items"][0]["statistics"]["viewCount"]
 
     detalles_canal.append(detalle_canal)
 
