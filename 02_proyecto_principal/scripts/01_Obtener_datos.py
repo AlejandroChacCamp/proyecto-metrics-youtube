@@ -6,7 +6,8 @@ import csv
 from datetime import datetime
 import isodate
 
-base_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
+script_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.abspath(os.path.join(script_dir, ".."))
 
 keys_path = os.path.join(base_dir, "keys.txt")
 info_videos = os.path.join(base_dir, "data", "info_videos_raw.csv")
@@ -203,5 +204,3 @@ with open(info_canal, 'a', newline='', encoding='utf-8') as archivo_canal:
     if not archivo_canal_existe:
         writer.writeheader()           # escribe la fila de encabezados
     writer.writerows(detalles_canal)   # escribe todas las filas de una vez
-
-

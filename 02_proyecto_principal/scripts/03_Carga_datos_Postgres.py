@@ -4,7 +4,8 @@ import os
 import psycopg2
 
 # Construcción de rutas de archivos
-base_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
+script_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.abspath(os.path.join(script_dir, ".."))
 
 keys_path = os.path.join(base_dir, "keys.txt")
 info_videos = os.path.join(base_dir, "data", "info_videos_clean.csv")

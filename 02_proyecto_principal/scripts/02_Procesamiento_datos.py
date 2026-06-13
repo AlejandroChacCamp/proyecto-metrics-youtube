@@ -2,7 +2,8 @@ import pandas as pd
 import os
 import isodate
 
-base_dir = os.path.abspath(os.path.join(os.getcwd(), ".."))
+script_dir = os.path.dirname(os.path.abspath(__file__))
+base_dir = os.path.abspath(os.path.join(script_dir, ".."))
 
 info_videos = os.path.join(base_dir, "data", "info_videos_raw.csv")
 info_canal = os.path.join(base_dir, "data", "info_canales_raw.csv")
