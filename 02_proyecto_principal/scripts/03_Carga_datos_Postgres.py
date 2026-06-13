@@ -14,6 +14,15 @@ info_canal = os.path.join(base_dir, "data", "info_canales_clean.csv")
 video = pd.read_csv(info_videos, encoding='utf-8-sig')
 canal = pd.read_csv(info_canal, encoding='utf-8-sig')
 
+# Termina el proceso si los dataframes viene vacío antes de abrir la conexión con la BD
+if video.empty:
+    print("ERROR: info_videos_clean.csv no tiene filas. Posible fallo silencioso en pasos anteriores.")
+    exit(1)
+
+if canal.empty:
+    print("ERROR: info_canales_clean.csv no tiene filas. Posible fallo silencioso en pasos anteriores.")
+    exit(1)
+
 # Renombrar columnas de los DataFrames para que coincidan con el snake_case de la BD
 video = video.rename(columns={'timestamp': 'tiempo_extraccion', 'channelTitle': 'channel_title','publishedAt': 'published_at', 'viewCount': 'view_count','likeCount': 'like_count', 'commentCount': 'comment_count'})
 
