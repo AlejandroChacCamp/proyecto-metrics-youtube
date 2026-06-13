@@ -8,7 +8,7 @@ info_videos = os.path.join(base_dir, "data", "info_videos_raw.csv")
 info_canal = os.path.join(base_dir, "data", "info_canales_raw.csv")
 
 # Convertir tipos
-video = pd.read_csv(info_videos,  encoding="utf-8")
+video = pd.read_csv(info_videos, encoding="utf-8")
 video["timestamp"] = pd.to_datetime(video["timestamp"], format="%Y-%m-%d %H:%M:%S")
 video["publishedAt"] = pd.to_datetime(video["publishedAt"], utc=True)
 video["duration_seconds"] = video["duration"].map(lambda x: isodate.parse_duration(x).total_seconds())
@@ -69,7 +69,7 @@ video.loc[video["viewCount"] > limite_superior_global, "tipo_video"] = "viral"
 video.loc[video["viewCount"] < limite_inferior_global, "tipo_video"] = "bajo"
 
 
-canal = pd.read_csv(info_canal)
+canal = pd.read_csv(info_canal, encoding="utf-8")
 
 canal["timestamp_canal"] = pd.to_datetime(canal["timestamp_canal"], format="%Y-%m-%d %H:%M:%S")
 
