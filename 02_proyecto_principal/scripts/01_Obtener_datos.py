@@ -188,8 +188,6 @@ for handle in HANDLE:
 
 campos = ["timestamp", "channelTitle","id","publishedAt", "title", "viewCount", "likeCount", "commentCount", "duration"]
 
-archivo_videos_existe = os.path.isfile(info_videos) and os.path.getsize(info_videos)
-
 with open(info_videos, 'w', newline='', encoding='utf-8') as archivo:
     writer = csv.DictWriter(archivo, fieldnames=campos)
     writer.writeheader()           # escribe la fila de encabezados
