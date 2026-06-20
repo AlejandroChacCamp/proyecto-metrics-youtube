@@ -16,3 +16,6 @@ __pycache__/
 # --- SISTEMA ---
 Thumbs.db
 .DS_Store
+
+# --- LOGS ---
+02_proyecto_principal/logs/
