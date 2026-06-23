@@ -73,6 +73,9 @@ def main():
         "03_Carga_datos_Postgres.py",
     ]
 
+    with open(log_path, "a", encoding="utf-8") as f:
+        f.write("\n")
+
     logger.info("=== Inicio de ejecución del pipeline ===")
 
     for script in pipeline:
