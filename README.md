@@ -1,211 +1,211 @@
 # YouTube Niche Analyzer (MVP)
 
-Pipeline de datos end to end que extrae métricas de canales de YouTube,
-las transforma, almacena en SQL y visualiza en Power BI.
-Proyecto de aprendizaje para la transición hacia roles técnicos de datos.
+End-to-end data pipeline that extracts YouTube channel metrics,
+transforms them, stores them in SQL, and visualizes them in Power BI.
+Learning project built as part of a transition toward technical data roles.
 
-## Objetivo
-Analizar el rendimiento de 5 canales del nicho cultural/político peruano
-para responder preguntas de negocio reales:
-- **¿Quién domina el nicho?** Comparativa de canales por suscriptores, vistas, engagement y conversión.
-- **¿Qué videos generan más impacto?** Identifica outliers y patrones de alto rendimiento.
-- **¿El canal está creciendo, estancado o cayendo?** Evolución mensual de actividad y audiencia.
-- **¿Cuándo conviene publicar?** Distribución de rendimiento y actividad por día y hora.
+## Goal
+Analyze the performance of 5 channels in the Peruvian cultural/political niche
+to answer real business questions:
+- **Who dominates the niche?** Channel comparison by subscribers, views, engagement, and conversion.
+- **Which videos drive the most impact?** Identify outliers and high-performance patterns.
+- **Is the channel growing, stagnant, or declining?** Monthly evolution of activity and audience.
+- **When is the best time to publish?** Performance and activity distribution by day and hour.
 
-## Canales analizados
-- [@Monitorfantasma](https://www.youtube.com/@Monitorfantasma) — Ensayo/Filosofía
-- [@hugoxchugox](https://www.youtube.com/@hugoxchugox) — Historia/Documental
-- [@ElRobotdePlaton](https://www.youtube.com/@ElRobotdePlaton) — Ciencia/Análisis crítico
-- [@DiloNomas](https://www.youtube.com/@DiloNomas) — Crónica/Sociedad
-- [@lahistoriade...1209](https://www.youtube.com/@lahistoriade...1209) — Documentales históricos peruanos
+## Channels analyzed
+- [@Monitorfantasma](https://www.youtube.com/@Monitorfantasma) — Essay/Philosophy
+- [@hugoxchugox](https://www.youtube.com/@hugoxchugox) — History/Documentary
+- [@ElRobotdePlaton](https://www.youtube.com/@ElRobotdePlaton) — Science/Critical Analysis
+- [@DiloNomas](https://www.youtube.com/@DiloNomas) — Chronicle/Society
+- [@lahistoriade...1209](https://www.youtube.com/@lahistoriade...1209) — Peruvian historical documentaries
 
-## Plan de Desarrollo
-- [x] **Fase 1: Extracción** — YouTube API, paginación, manejo de errores, filtro de shorts
-- [x] **Fase 2: Transformación** — Limpieza y normalización con Pandas
-- [x] **Fase 3: Almacenamiento** — Carga en SQL con actualización incremental
-- [x] **Fase 4: Visualización** — Dashboard en Power BI
-- [x] **Fase 5: Automatización** — Pipeline automatizado con Task Scheduler y logging
+## Development Plan
+- [x] **Phase 1: Extraction** — YouTube API, pagination, error handling, shorts filtering
+- [x] **Phase 2: Transformation** — Cleaning and normalization with Pandas
+- [x] **Phase 3: Storage** — SQL loading with incremental updates
+- [x] **Phase 4: Visualization** — Power BI dashboard
+- [x] **Phase 5: Automation** — Automated pipeline with Task Scheduler and logging
 
-## Tecnologías
-- **Lenguaje:** Python (vía Anaconda)
+## Tech Stack
+- **Language:** Python (via Anaconda)
 - **Editor:** Jupyter Notebook → VS Code
-- **Librerías:** `requests`, `isodate`, `pandas`, `os`, `time`, `datetime`, `psycopg2`, `logging`, `subprocess`
-- **Base de datos:** PostgreSQL, DBeaver
-- **Visualización:** Power BI Desktop
-- **Diseño:** Canva (fondos de páginas del dashboard)
+- **Libraries:** `requests`, `isodate`, `pandas`, `os`, `time`, `datetime`, `psycopg2`, `logging`, `subprocess`
+- **Database:** PostgreSQL, DBeaver
+- **Visualization:** Power BI Desktop
+- **Design:** Canva (dashboard page backgrounds)
 - **API:** YouTube Data API v3
-- **Automatización:** Windows Task Scheduler
+- **Automation:** Windows Task Scheduler
 
-## Estructura del proyecto
+## Project Structure
 ```
 proyecto-metrics-youtube/
 │
 │── 02_proyecto_principal/
-│   ├── run_pipeline.py             # Orquestador — punto de entrada único para automatización
+│   ├── run_pipeline.py             # Orchestrator — single entry point for automation
 │   │
 │   ├── data/
-│   │   ├── info_videos_raw.csv         # Data cruda extraída por videos
-│   │   ├── info_canales_raw.csv        # Data cruda extraída por canal
-│   │   ├── info_videos_clean.csv       # Data procesada por videos
-│   │   └── info_canales_clean.csv      # Data procesada por canal
+│   │   ├── info_videos_raw.csv         # Raw data extracted per video
+│   │   ├── info_canales_raw.csv        # Raw data extracted per channel
+│   │   ├── info_videos_clean.csv       # Processed data per video
+│   │   └── info_canales_clean.csv      # Processed data per channel
 │   │
 │   ├── scripts/
-│   │   ├── 01_Obtener_datos.py         # Extracción via YouTube API v3 (Fase 1)
-│   │   ├── 02_Procesamiento_datos.py   # Transformación con Pandas (Fase 2)
-│   │   ├── 03_Carga_datos_Postgres.py  # Carga a PostgreSQL (Fase 3)
-│   │   ├── 01_Obtener_datos.ipynb      # Notebook original de extracción
-│   │   ├── 02_Notebook_De_Pruebas.ipynb   # Borrador de pruebas
-│   │   ├── 03_Procesamiento_datos.ipynb   # Notebook original de transformación
-│   │   └── 04_Carga_datos_Postgres.ipynb  # Notebook original de carga
+│   │   ├── 01_Obtener_datos.py         # Extraction via YouTube API v3 (Phase 1)
+│   │   ├── 02_Procesamiento_datos.py   # Transformation with Pandas (Phase 2)
+│   │   ├── 03_Carga_datos_Postgres.py  # Load to PostgreSQL (Phase 3)
+│   │   ├── 01_Obtener_datos.ipynb      # Original extraction notebook
+│   │   ├── 02_Notebook_De_Pruebas.ipynb   # Testing draft
+│   │   ├── 03_Procesamiento_datos.ipynb   # Original transformation notebook
+│   │   └── 04_Carga_datos_Postgres.ipynb  # Original loading notebook
 │   │
 │   ├── sql/
-│   │   ├── schema.sql                  # Creación de tablas, tipos de datos e índices
-│   │   └── views.sql                   # Lógica de negocio centralizada en 3 vistas
+│   │   ├── schema.sql                  # Table creation, data types, and indexes
+│   │   └── views.sql                   # Business logic centralized in 3 views
 │   │
 │   ├── dashboards/
-│   │   └── youtube_niche_analyzer.pbix # Dashboard Power BI Fase 4
+│   │   └── youtube_niche_analyzer.pbix # Power BI dashboard (Phase 4)
 │   │
-│   ├── logs/                           # Logs de ejecución (excluido via .gitignore)
+│   ├── logs/                           # Execution logs (excluded via .gitignore)
 │   │   └── pipeline.log
 │   │
-│   └── keys.txt                        # API keys y credenciales (excluido via .gitignore)
+│   └── keys.txt                        # API keys and credentials (excluded via .gitignore)
 │
 ├── .gitignore
 └── README.md
 ```
 
-## Datos extraídos (Fase 1)
-Por cada canal se extraen los 400 videos más recientes (excluyendo shorts
-y videos menores a 5 minutos) con las siguientes métricas:
+## Data Extracted (Phase 1)
+For each channel, the 400 most recent videos are extracted (excluding shorts
+and videos under 5 minutes) with the following metrics:
 `timestamp`, `channelTitle`, `id`, `publishedAt`, `title`, `viewCount`, `likeCount`,
 `commentCount`, `duration`
 
-También se extraen la información de cada canal:
+Channel-level information is also extracted:
 `title`, `subscriberCount`, `videoCount`, `viewCount`
 
-## Datos limpiados (Fase 2)
-métricas por videos:
+## Cleaned Data (Phase 2)
+Video-level metrics:
 `timestamp`, `channelTitle`, `id`, `publishedAt`, `title`, `viewCount`, `likeCount`, `commentCount`, `duration_seconds`, `hora`, `dia_semana`, `nombre_dia`, `engagement_rate`, `tipo_video`
 
-métricas por canal:
+Channel-level metrics:
 `timestamp_canal`, `title`, `subscriberCount`, `videoCount`, `viewCount`
 
-## Almacenamiento de datos (Fase 3)
-En este punto se decidió estandarizar los nombres de las columnas a snake_case
+## Data Storage (Phase 3)
+At this point, it was decided to standardize column names to snake_case.
 
-## Dashboard (Fase 4)
-El dashboard responde 7 preguntas de negocio distribuidas en 4 páginas:
+## Dashboard (Phase 4)
+The dashboard answers 7 business questions across 4 pages:
 
-- **Página 1 — Vista General del Nicho:** Tabla comparativa de canales con suscriptores, vistas, engagement rate y ratio views/suscriptores. KPIs del nicho completo con indicadores de crecimiento MoM y YoY.
-- **Página 2 — Rendimiento de Contenido:** Scatter plot views vs likes por video con tamaño de burbuja dinámico (comentarios, engagement o duración). Identifica videos virales y outliers.
-- **Página 3 — Tendencias Temporales:** Evolución mensual de vistas y videos publicados. Crecimiento de suscriptores por canal desde el inicio del pipeline.
-- **Página 4 — Calendario de Publicación:** Heatmap de días y horas cruzado con rendimiento o actividad. Identifica los momentos de mayor impacto por canal.
+- **Page 1 — Niche Overview:** Comparative channel table with subscribers, views, engagement rate, and views/subscribers ratio. Niche-wide KPIs with MoM and YoY growth indicators.
+- **Page 2 — Content Performance:** Views vs. likes scatter plot per video with dynamic bubble size (comments, engagement, or duration). Identifies viral videos and outliers.
+- **Page 3 — Time Trends:** Monthly evolution of views and videos published. Subscriber growth per channel since the pipeline's start.
+- **Page 4 — Publishing Calendar:** Day/hour heatmap cross-referenced with performance or activity. Identifies peak-impact windows per channel.
 
-Todas las páginas incluyen tooltips personalizados y navegación entre páginas.
+All pages include custom tooltips and page-to-page navigation.
 
-## Decisiones de diseño y limitaciones
+## Design Decisions and Limitations
 
-### Fase 1:
-#### Decisiones de diseño
-- Endpoint: playlistItems + videos.list en lugar de search.list. 50x más eficiente en cuota — 80 unidades vs 4,000 para 5 canales.
-- Límite de videos: 400 por canal priorizando los más recientes. Videos de 2019-2023 quedan disponibles pero el filtro de fecha se delega a Power BI, no al pipeline.
-- Filtro de contenido corto: umbral de 300 segundos para excluir shorts y teasers. Estático por ahora — en Fase 2 se evaluará complementarlo con detección de outliers con IQR.
-- Manejo de errores: retry con 3 intentos y 5 segundos entre intentos. Si falla, el script guarda lo que tiene y continúa con el siguiente canal.
-- Seguridad: API key en archivo .txt excluido via .gitignore. Lección aprendida en vivo — los outputs de Jupyter se incrustan en el .ipynb y se suben a GitHub.
-- Dos CSVs separados: info_videos_youtube_raw.csv para métricas por video e info_canales_raw.csv para datos agregados del canal. Separación que refleja la futura estructura de tablas en SQL.
+### Phase 1:
+#### Design Decisions
+- Endpoint: playlistItems + videos.list instead of search.list. 50x more quota-efficient — 80 units vs. 4,000 for 5 channels.
+- Video limit: 400 per channel, prioritizing the most recent. Videos from 2019-2023 remain available, but date filtering is delegated to Power BI, not the pipeline.
+- Short-content filter: 300-second threshold to exclude shorts and teasers. Static for now — Phase 2 will evaluate complementing it with IQR-based outlier detection.
+- Error handling: retry with 3 attempts and 5 seconds between attempts. On failure, the script saves what it has and moves on to the next channel.
+- Security: API key stored in a .txt file excluded via .gitignore. Lesson learned the hard way — Jupyter outputs get embedded in the .ipynb and pushed to GitHub.
+- Two separate CSVs: info_videos_youtube_raw.csv for per-video metrics and info_canales_raw.csv for aggregated channel data. This split mirrors the future SQL table structure.
 
-#### Limitaciones
-- El Robot de Platón tiene shorts masivamente mezclados en su playlist de uploads — de 400 IDs extraídos solo 117 superan el filtro. Es la muestra más pequeña del análisis.
-- La Historia de... tiene solo 29 videos públicos reales. Canal válido analíticamente por su alto promedio de views, pero con volumen limitado para patrones estadísticos.
-- YouTube no distingue shorts de videos en playlistItems — el filtro de duración es el único mecanismo disponible sin acceso a endpoints privados.
-- publishedAt incluye timezone en formato ISO 8601 — requiere parsing en Fase 2 antes de poder usarse para análisis temporal.
-- Hasta la fase 1, no se contempla una extracción automatizada de datos lo suficientemente grande para armar una serie de tiempo. Esto se resolverá en la fase 5.
+#### Limitations
+- El Robot de Platón has shorts massively mixed into its uploads playlist — of 400 extracted IDs, only 117 pass the filter. It's the smallest sample in the analysis.
+- La Historia de... has only 29 real public videos. Analytically valid due to its high average views, but with limited volume for statistical patterns.
+- YouTube doesn't distinguish shorts from regular videos in playlistItems — the duration filter is the only mechanism available without access to private endpoints.
+- publishedAt includes a timezone in ISO 8601 format — requires parsing in Phase 2 before it can be used for time-based analysis.
+- As of Phase 1, there isn't yet a large enough automated data extraction history to build a proper time series. This gets resolved in Phase 5.
 
-### Fase 2:
-#### Decisiones de diseño
-- duration original eliminada — duration_seconds suficiente para análisis y visualización.
-- Transformaciones en Pandas, no en Power Query — Power BI queda solo para DAX y time intelligence.
-- nombre_dia con diccionario manual — independiente del locale del sistema.
-- IQR aplicado a nivel de nicho (global), no por canal.
-- canal se acumula por ejecución — cada fila es una snapshot con timestamp_canal.
-- Extracción incremental delegada a Fase 3 — el pipeline actual extrae histórico completo.
+### Phase 2:
+#### Design Decisions
+- Original duration column dropped — duration_seconds is sufficient for analysis and visualization.
+- Transformations done in Pandas, not Power Query — Power BI is reserved for DAX and time intelligence only.
+- nombre_dia built from a manual dictionary — independent of the system's locale.
+- IQR applied at the niche level (global), not per channel.
+- channel data accumulates per run — each row is a snapshot with timestamp_canal.
+- Incremental extraction delegated to Phase 3 — the current pipeline extracts full history each time.
 
-#### Limitaciones
-- Limitación documentada en código: alta dispersión entre canales hace el IQR global imperfecto; IQR por canal descartado por muestra insuficiente en La Historia De... (29 videos). Revisar en P2.
+#### Limitations
+- Documented limitation in code: high dispersion across channels makes the global IQR imperfect; per-channel IQR was dropped due to insufficient sample size for La Historia De... (29 videos). To revisit in P2.
 
-### Fase 3:
-#### Decisiones de diseño
-- Motor elegido: PostgreSQL sobre SQLite — alineación con stack de mercado y portabilidad futura.
-- Para la tabla videos: id de videos como PRIMARY KEY natural — inmutable, generado por YouTube.
-- Para la tabla canal_snapshots: Surrogate SERIAL como PK en canal_snapshots — evita fragilidad de PK compuesta por colisión de timestamps.
-- Índice compuesto sobre (channel_title, dia_semana, hora) en tabla videos — optimiza queries de la Página 4 del dashboard (heatmap).
-- Validaciones automáticas en el script de carga — conteo por canal, rango de fechas, nulos en columnas críticas.
-- Parser unificado de keys.txt entre Fase 1 y Fase 3 — configuración centralizada.
-- Encoding utf-8-sig en to_csv Fase 2 y read_csv Fase 3 — resuelve corrupción de caracteres especiales en español.
-- Tabla videos queda como snapshot más reciente, cada vez que se llame a la API esta tabla mostrará solo la información más reciente - ON CONFLICT ... DO UPDATE.
-- Tabla canales guarda histórico, para esto se agrega ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, channel_title) - ON CONFLICT (tiempo_extraccion, channel_title) DO NOTHING.
+### Phase 3:
+#### Design Decisions
+- Engine chosen: PostgreSQL over SQLite — aligns with market-standard stack and future portability.
+- For the videos table: video id as a natural PRIMARY KEY — immutable, generated by YouTube.
+- For the canal_snapshots table: surrogate SERIAL as PK — avoids fragility from a composite PK colliding on timestamps.
+- Composite index on (channel_title, dia_semana, hora) in the videos table — optimizes queries for the dashboard's Page 4 (heatmap).
+- Automated validations in the loading script — per-channel counts, date range checks, nulls in critical columns.
+- Unified keys.txt parser shared between Phase 1 and Phase 3 — centralized configuration.
+- utf-8-sig encoding in Phase 2's to_csv and Phase 3's read_csv — resolves special-character corruption in Spanish text.
+- The videos table holds the most recent snapshot only — each time the API is called, this table shows only the latest info via ON CONFLICT ... DO UPDATE.
+- The canales table keeps historical records, enforced by ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, channel_title) — ON CONFLICT (tiempo_extraccion, channel_title) DO NOTHING.
 
-    **Vistas creadas:**
-- evolucion_mensual_canal — responde pregunta 5 (evolución mensual de suscriptores, videos y vistas por canal usando DATE_TRUNC sobre canal_snapshots)
-- momento_despegue — responde pregunta 6 (detecta incremento semanal de métricas usando LAG y CTE sobre canal_snapshots)
-- frecuencia_publicacion_crecimiento — responde pregunta 9 (cruza frecuencia de publicación de videos con crecimiento de suscriptores usando JOIN entre videos y canal_snapshots)
+    **Views created:**
+- evolucion_mensual_canal — answers question 5 (monthly evolution of subscribers, videos, and views per channel using DATE_TRUNC over canal_snapshots)
+- momento_despegue — answers question 6 (detects weekly metric increases using LAG and a CTE over canal_snapshots)
+- frecuencia_publicacion_crecimiento — answers question 9 (cross-references publishing frequency with subscriber growth using a JOIN between videos and canal_snapshots)
 
-#### Limitaciones
-- Se descarta la implementación de NLP para responder a las preguntas 3 y 10:
+#### Limitations
+- NLP implementation was dropped for questions 3 and 10:
 
-        Pregunta 3: ¿Hay palabras en los títulos que se repiten en los videos más exitosos?
+        Question 3: Are there recurring words in the titles of the most successful videos?
 
-        Pregunta 10: ¿Qué temas o formatos tienen alta demanda (engagement) pero poca oferta (pocos videos)?
+        Question 10: Which topics or formats have high demand (engagement) but low supply (few videos)?
 
-- Esta limitación responde al costo de implementar NLP versus su utilidad para mi objetivo profesional, considerando que implementarlo podría tomarme en este momento un mes. Se reserva la implementación de este feature para una próxima iteración de este MVP.
-- Las vistas usan datos desde el inicio del proyecto — no hay historia pre-Fase 1 en canal_snapshots.
+- This limitation reflects the cost of implementing NLP versus its value for my professional goal, given that implementing it would currently take about a month. This feature is reserved for a future iteration of this MVP.
+- The views use data from the project's start date only — there's no pre-Phase-1 history in canal_snapshots.
 
-### Fase 4:
-#### Decisiones de diseño
-- Modelo de datos centralizado en Dim_Canal — tabla de dimensión dinámica generada desde videos via Power Query. Si se agregan canales, aparecen automáticamente al refrescar.
-- Tabla Calendario DAX con jerarquía año/mes/día en español — base para time intelligence en todas las páginas.
-- fecha_publicacion como columna DATE derivada en Power Query — resuelve la incompatibilidad entre TIMESTAMPTZ de PostgreSQL y la tabla Calendario. published_at se preserva en la base de datos para no perder el dato original.
-- Tamaño de burbuja dinámico en scatter (Página 2) y métrica dinámica en heatmap (Página 4) implementados con el patrón: tabla desconectada → medida SWITCH → visual con formato condicional. Field Parameters nativos de Power BI no aceptan medidas dinámicas en el campo Size del scatter ni en formato condicional.
-- Heatmap implementado con Matrix + formato condicional por gradiente — sin dependencias de visuals externos de AppSource.
-- Indicadores de crecimiento MoM/YoY en KPIs con lógica de filtros explícita via ISFILTERED:
+### Phase 4:
+#### Design Decisions
+- Data model centralized around Dim_Canal — a dynamic dimension table generated from videos via Power Query. If channels are added, they appear automatically on refresh.
+- DAX Calendar table with a year/month/day hierarchy in Spanish — the base for time intelligence across all pages.
+- fecha_publicacion as a derived DATE column in Power Query — resolves the incompatibility between PostgreSQL's TIMESTAMPTZ and the Calendar table. published_at is preserved in the database to avoid losing the original value.
+- Dynamic bubble size in the scatter plot (Page 2) and dynamic metric in the heatmap (Page 4) implemented with the pattern: disconnected table → SWITCH measure → visual with conditional formatting. Power BI's native Field Parameters don't support dynamic measures in the scatter plot's Size field or in conditional formatting.
+- Heatmap implemented with a Matrix + gradient conditional formatting — no dependency on external AppSource visuals.
+- MoM/YoY growth indicators in the KPIs with explicit filter logic via ISFILTERED:
 
-    | Año | Mes | Comportamiento |
+    | Year | Month | Behavior |
     |-----|-----|----------------|
-    | ✗ | ✗ | Mensaje guía al usuario |
-    | ✓ | ✗ | Crecimiento total del año vs. año anterior |
-    | ✗ | ✓ | Mensaje guía al usuario |
-    | ✓ | ✓ | MoM + YoY del mes seleccionado |
+    | ✗ | ✗ | Guidance message shown to user |
+    | ✓ | ✗ | Total year-over-year growth |
+    | ✗ | ✓ | Guidance message shown to user |
+    | ✓ | ✓ | MoM + YoY for the selected month |
 
-- Avg Engagement Rate expresado en puntos porcentuales (pp) en los indicadores de crecimiento — más preciso que crecimiento relativo para comparar porcentajes.
-- Identidad visual: paleta `#F5F5F5` / `#FFFFFF` / `#CC0000` / `#1C1C1C`, fondos diseñados en Canva, rojo reservado como acento en formato condicional y gradientes.
+- Avg Engagement Rate expressed in percentage points (pp) in growth indicators — more accurate than relative growth for comparing percentages.
+- Visual identity: palette `#F5F5F5` / `#FFFFFF` / `#CC0000` / `#1C1C1C`, backgrounds designed in Canva, red reserved as an accent in conditional formatting and gradients.
 
-#### Limitaciones
-- **Clave de relación basada en string:** El modelo usa channel_title (TEXT) como clave de relación entre todas las tablas. La solución correcta es un canal_id entero como clave surrogate. Pendiente para P2. Mitigación actual: channel_title se normaliza desde la YouTube Data API y no ha variado en ninguna extracción del MVP.
-- **Historial insuficiente en canal_snapshots:** La tabla tiene solo 2 snapshots por canal (abril y mayo 2026) por ejecución manual del pipeline. Los indicadores de crecimiento de suscriptores y vistas del canal comparan dos puntos, no una tendencia. Se resuelve automáticamente en Fase 5 con la automatización del pipeline.
+#### Limitations
+- **String-based relationship key:** The model uses channel_title (TEXT) as the relationship key across all tables. The correct solution would be an integer canal_id as a surrogate key. Pending for P2. Current mitigation: channel_title is normalized from the YouTube Data API and hasn't changed across any extraction in the MVP.
+- **Insufficient history in canal_snapshots:** The table has only 2 snapshots per channel (April and May 2026) due to manual pipeline runs. Subscriber and view growth indicators compare two points, not a trend. This gets resolved automatically in Phase 5 through pipeline automation.
 
-### Fase 5:
-#### Decisiones de diseño
+### Phase 5:
+#### Design Decisions
 
-**Acondicionamiento de scripts de fases previas**
-- Conversión de notebooks a scripts `.py` — los notebooks servían para exploración interactiva; la producción vive en `.py`. Prerequisito para cualquier automatización fuera de Jupyter.
-- Rutas base con `__file__` en lugar de `os.getcwd()` — `os.getcwd()` depende del directorio de trabajo del proceso que invoca el script, que en Task Scheduler no es la carpeta del proyecto. `__file__` ancla las rutas a la ubicación física del script, sin importar desde dónde se invoque.
-- Corrección de llamada a API de canal: `requests.get()` directo reemplazado por `hacer_peticion()` — la llamada original no tenía reintentos, dejando un punto de fallo no resiliente en ejecución desatendida.
-- Validación de DataFrames vacíos antes de conectar a PostgreSQL — si la extracción o transformación falla silenciosamente y produce CSVs sin filas, `executemany()` no lanza error y el pipeline reportaría éxito sin haber insertado nada. Se valida con `video.empty` / `canal.empty` antes de abrir la conexión, con `exit(1)` si se detecta.
-- Sesión de PostgreSQL envuelta en `try/finally` — garantiza el cierre de cursor y conexión en cualquier ruta de salida, incluyendo las que terminan con `exit(1)` dentro de bloques `except`.
+**Conditioning scripts from previous phases**
+- Converted notebooks to `.py` scripts — notebooks were useful for interactive exploration; production code lives in `.py` files. A prerequisite for any automation outside Jupyter.
+- Base paths using `__file__` instead of `os.getcwd()` — `os.getcwd()` depends on the working directory of the process invoking the script, which in Task Scheduler is not the project folder. `__file__` anchors paths to the script's physical location, regardless of where it's invoked from.
+- Fixed the channel API call: direct `requests.get()` replaced with `hacer_peticion()` — the original call had no retries, leaving a non-resilient failure point in unattended execution.
+- Empty DataFrame validation before connecting to PostgreSQL — if extraction or transformation fails silently and produces CSVs with no rows, `executemany()` doesn't raise an error and the pipeline would report success without having inserted anything. Validated with `video.empty` / `canal.empty` before opening the connection, with `exit(1)` if detected.
+- PostgreSQL session wrapped in `try/finally` — guarantees cursor and connection closure on any exit path, including those ending in `exit(1)` inside `except` blocks.
 
-**Orquestador y automatización**
-- Orquestador único `run_pipeline.py` como punto de entrada — ejecuta los 3 scripts en orden como subprocesos vía `subprocess.run()`. Si un paso falla (exit code != 0), la cadena se detiene sin intentar los pasos siguientes. Task Scheduler apunta únicamente a este archivo.
-- `sys.executable` en lugar de `"python"` — garantiza que el orquestador use la misma instalación de Python (Anaconda) con la que fueron probados los scripts, sin depender del PATH del entorno de Task Scheduler.
-- Logging con `RotatingFileHandler` en `logs/pipeline.log` — registro permanente con rotación por tamaño (2MB, 5 backups). Cada línea incluye timestamp, nivel de severidad y mensaje. Salida simultánea a consola para monitoreo durante pruebas manuales. La carpeta `logs/` está excluida del repositorio vía `.gitignore`.
-- Separador visual entre ejecuciones en el log — salto de línea escrito directamente al archivo antes de cada bloque de ejecución, porque el logger no puede escribir líneas vacías sin timestamp.
-- Task Scheduler configurado con trigger semanal (sábados 10:30) + condición de red activa + "ejecutar tan pronto sea posible si no hubo inicio programado" — si la laptop estaba apagada a la hora programada, el pipeline corre en cuanto la máquina esté disponible con conexión a internet.
+**Orchestration and automation**
+- Single orchestrator `run_pipeline.py` as the entry point — runs the 3 scripts in order as subprocesses via `subprocess.run()`. If a step fails (exit code != 0), the chain stops without attempting the following steps. Task Scheduler points only to this file.
+- `sys.executable` instead of `"python"` — ensures the orchestrator uses the same Python installation (Anaconda) the scripts were tested with, without relying on Task Scheduler's environment PATH.
+- Logging with `RotatingFileHandler` in `logs/pipeline.log` — persistent logging with size-based rotation (2MB, 5 backups). Every line includes a timestamp, severity level, and message. Simultaneous console output for monitoring during manual tests. The `logs/` folder is excluded from the repository via `.gitignore`.
+- Visual separator between runs in the log — a blank line written directly to the file before each execution block, since the logger can't write empty lines without a timestamp.
+- Task Scheduler configured with a weekly trigger (Saturdays at 10:30) + active network condition + "run as soon as possible if a scheduled start was missed" — if the laptop was off at the scheduled time, the pipeline runs as soon as the machine is available with an internet connection.
 
-#### Limitaciones
-- **Ventana CMD visible durante ejecución:** Task Scheduler con "Run only when user is logged on" muestra brevemente una ventana CMD mientras el pipeline corre (~1 minuto). Eliminarla requiere "Run whether user is logged on or not", que introduce complejidad de permisos innecesaria para uso personal.
-- **Sin notificación de fallos:** si el pipeline falla un sábado, solo es detectable revisando manualmente `logs/pipeline.log`. No hay mecanismo de alerta ante fallos. Aceptable para MVP personal; en producción real se resolvería con un sistema de alertas (email, Slack, etc.).
-- **Dependencia de disponibilidad de la máquina local:** el pipeline requiere que la laptop esté encendida y con internet. No hay servidor ni instancia cloud que garantice disponibilidad. Limitación de arquitectura local — mitigada parcialmente con la condición "ejecutar tan pronto sea posible".
+#### Limitations
+- **Visible CMD window during execution:** Task Scheduler with "Run only when user is logged on" briefly shows a CMD window while the pipeline runs (~1 minute). Removing it requires "Run whether user is logged on or not," which introduces unnecessary permission complexity for personal use.
+- **No failure notifications:** if the pipeline fails on a Saturday, it's only detectable by manually checking `logs/pipeline.log`. There's no failure alert mechanism. Acceptable for a personal MVP; in a real production setting this would be solved with an alerting system (email, Slack, etc.).
+- **Dependent on local machine availability:** the pipeline requires the laptop to be on and connected to the internet. There's no server or cloud instance guaranteeing availability. A local-architecture limitation — partially mitigated by the "run as soon as possible" condition.
 
 ---
-*Proyecto personal de aprendizaje como parte de la transición de Data Analyst
-hacia roles técnicos de datos. Desarrollado con método incremental:
-primero que funcione, luego refactorizar.*
+*Personal learning project as part of a transition from Data Analyst
+toward technical data roles. Built with an incremental approach:
+make it work first, then refactor.*
