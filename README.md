@@ -204,6 +204,7 @@ All pages include custom tooltips and page-to-page navigation.
 - **Visible CMD window during execution:** Task Scheduler with "Run only when user is logged on" briefly shows a CMD window while the pipeline runs (~1 minute). Removing it requires "Run whether user is logged on or not," which introduces unnecessary permission complexity for personal use.
 - **No failure notifications:** if the pipeline fails on a Saturday, it's only detectable by manually checking `logs/pipeline.log`. There's no failure alert mechanism. Acceptable for a personal MVP; in a real production setting this would be solved with an alerting system (email, Slack, etc.).
 - **Dependent on local machine availability:** the pipeline requires the laptop to be on and connected to the internet. There's no server or cloud instance guaranteeing availability. A local-architecture limitation — partially mitigated by the "run as soon as possible" condition.
+- **Dynamic IP restriction on the API key:** The YouTube API key was configured with IP-based restrictions in the Google Cloud Console. Since residential/home IPs are dynamic and change periodically, this caused silent failures for 2 weeks until they were detected via logs. Solution: Replace the IP restriction with an API restriction (allowing only the YouTube Data API v3).
 
 ---
 *Personal learning project as part of a transition from Data Analyst
