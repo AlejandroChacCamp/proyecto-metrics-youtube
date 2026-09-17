@@ -30,3 +30,14 @@ CREATE TABLE IF NOT EXISTS "canal_snapshots" (
 
 ALTER TABLE "canal_snapshots" 
 ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, channel_title);
+
+CREATE TABLE IF NOT EXISTS "channels" (
+    "canal_id" SERIAL PRIMARY KEY,
+    "channel_title" TEXT NOT NULL UNIQUE
+);
+
+INSERT INTO channels (channel_title)
+SELECT DISTINCT channel_title FROM videos
+UNION
+SELECT DISTINCT channel_title FROM canal_snapshots
+ON CONFLICT (channel_title) DO NOTHING;
