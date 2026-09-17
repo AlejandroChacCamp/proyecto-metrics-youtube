@@ -62,6 +62,40 @@ except psycopg2.Error as e:
     exit(1)  # Finaliza el programa con código de error
 
 try:
+    # --------------------------------------------------
+    # RESOLUCIÓN DE canal_id (Fase 0 — L-04)
+    # --------------------------------------------------
+    # Por cada channel_title presente en este batch (videos y canales),
+    # se busca su canal_id en la tabla "channels"; si el canal es nuevo,
+    # se crea ahí mismo y se usa el canal_id recién generado.
+    def get_or_create_canal_id(cursor, channel_title: str) -> int:
+        cursor.execute(
+            "SELECT canal_id FROM channels WHERE channel_title = %s",
+            (channel_title,)
+        )
+        row = cursor.fetchone()
+        if row:
+            return row[0]
+        cursor.execute(
+            "INSERT INTO channels (channel_title) VALUES (%s) RETURNING canal_id",
+            (channel_title,)
+        )
+        return cursor.fetchone()[0]
+
+    canales_unicos = pd.unique(pd.concat([video['channel_title'], canal['channel_title']]))
+
+    canal_id_map = {}
+    for ct in canales_unicos:
+        canal_id_map[ct] = get_or_create_canal_id(cur, ct)
+    conn.commit()  # confirma los channels nuevos (si los hubo) antes de seguir
+
+    print(f"canal_id resuelto para {len(canal_id_map)} canal(es).")
+
+    # Se agrega canal_id como última columna de cada DataFrame,
+    # coincidiendo con el orden de columnas en los INSERT de más abajo.
+    video['canal_id'] = video['channel_title'].map(canal_id_map)
+    canal['canal_id'] = canal['channel_title'].map(canal_id_map)
+
     # Transformación del DataFrame video a lista de tuplas
     # Paso 1: convertir el DataFrame a un array de NumPy
     array_videos = video.to_numpy()
@@ -79,8 +113,8 @@ try:
     # Preparación e inserción de datos en la tabla videos
     insert_videos = """
         INSERT INTO videos 
-        (tiempo_extraccion, channel_title, id, published_at, title, view_count, like_count, comment_count, duration_seconds, hora, dia_semana, nombre_dia, engagement_rate, tipo_video)
-        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+        (tiempo_extraccion, channel_title, id, published_at, title, view_count, like_count, comment_count, duration_seconds, hora, dia_semana, nombre_dia, engagement_rate, tipo_video, canal_id)
+        VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         ON CONFLICT (id) DO UPDATE SET
             view_count = EXCLUDED.view_count,
             like_count = EXCLUDED.like_count,
@@ -160,6 +194,25 @@ try:
         print("No se encontraron nulos en esas columnas.")
     print()
 
+    # --------------------------------------------------
+    # 4. Verificar nulos en canal_id (videos)
+    # --------------------------------------------------
+    print("4. Filas con canal_id nulo (videos):")
+    cur.execute("""
+        SELECT channel_title, COUNT(*)
+        FROM videos
+        WHERE canal_id IS NULL
+        GROUP BY channel_title;
+    """)
+    rows = cur.fetchall()
+    if rows:
+        print(f"{len(rows)} canal(es) con filas sin canal_id:")
+        for row in rows:
+            print(f"channel_title={row[0]}, filas={row[1]}")
+    else:
+        print("No se encontraron nulos en canal_id.")
+    print()
+
     print("\n=== FIN DE VALIDACIONES - TABLA VIDEOS ===")
 
     # Transformación del DataFrame canal a lista de tuplas
@@ -174,9 +227,9 @@ try:
     # Inserción en la tabla canal_snapshots
     insert_canales = """
         INSERT INTO canal_snapshots 
-        (tiempo_extraccion, channel_title, subscriber_count, video_count, view_count)
-        VALUES (%s, %s, %s, %s, %s)
-        ON CONFLICT (tiempo_extraccion, channel_title) DO NOTHING;
+        (tiempo_extraccion, channel_title, subscriber_count, video_count, view_count, canal_id)
+        VALUES (%s, %s, %s, %s, %s, %s)
+        ON CONFLICT (tiempo_extraccion, canal_id) DO NOTHING;
     """
 
     try:
