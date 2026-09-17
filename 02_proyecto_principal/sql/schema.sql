@@ -31,6 +31,10 @@ CREATE TABLE IF NOT EXISTS "canal_snapshots" (
 ALTER TABLE "canal_snapshots" 
 ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, channel_title);
 
+=================================================
+
+# Crear channels y poblarla
+
 CREATE TABLE IF NOT EXISTS "channels" (
     "canal_id" SERIAL PRIMARY KEY,
     "channel_title" TEXT NOT NULL UNIQUE
@@ -41,3 +45,32 @@ SELECT DISTINCT channel_title FROM videos
 UNION
 SELECT DISTINCT channel_title FROM canal_snapshots
 ON CONFLICT (channel_title) DO NOTHING;
+
+=================================================
+
+# Agregar canal_id FK a videos y canal_snapshots + backfill
+
+-- videos
+ALTER TABLE videos ADD COLUMN canal_id INTEGER;
+
+UPDATE videos v
+SET canal_id = c.canal_id
+FROM channels c
+WHERE v.channel_title = c.channel_title;
+
+ALTER TABLE videos ALTER COLUMN canal_id SET NOT NULL;
+ALTER TABLE videos
+  ADD CONSTRAINT fk_videos_canal FOREIGN KEY (canal_id) REFERENCES channels(canal_id);
+
+-- canal_snapshots
+ALTER TABLE canal_snapshots ADD COLUMN canal_id INTEGER;
+
+UPDATE canal_snapshots cs
+SET canal_id = c.canal_id
+FROM channels c
+WHERE cs.channel_title = c.channel_title;
+
+ALTER TABLE canal_snapshots ALTER COLUMN canal_id SET NOT NULL;
+ALTER TABLE canal_snapshots
+  ADD CONSTRAINT fk_canal_snapshots_canal FOREIGN KEY (canal_id) REFERENCES channels(canal_id);
+
