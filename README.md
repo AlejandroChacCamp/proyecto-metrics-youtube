@@ -180,7 +180,7 @@ All pages include custom tooltips and page-to-page navigation.
 - Visual identity: palette `#F5F5F5` / `#FFFFFF` / `#CC0000` / `#1C1C1C`, backgrounds designed in Canva, red reserved as an accent in conditional formatting and gradients.
 
 #### Limitations
-- **String-based relationship key:** The model uses channel_title (TEXT) as the relationship key across all tables. The correct solution would be an integer canal_id as a surrogate key. Pending for P2. Current mitigation: channel_title is normalized from the YouTube Data API and hasn't changed across any extraction in the MVP.
+- **String-based relationship key:** The model uses channel_title (TEXT) as the relationship key across all tables. The correct solution would be an integer canal_id as a surrogate key. Pending for P2. Current mitigation: channel_title is normalized from the YouTube Data API and hasn't changed across any extraction in the MVP. **FIXED**
 - **Insufficient history in canal_snapshots:** The table has only 2 snapshots per channel (April and May 2026) due to manual pipeline runs. Subscriber and view growth indicators compare two points, not a trend. This gets resolved automatically in Phase 5 through pipeline automation.
 
 ### Phase 5:
