@@ -31,9 +31,9 @@ CREATE TABLE IF NOT EXISTS "canal_snapshots" (
 ALTER TABLE "canal_snapshots" 
 ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, channel_title);
 
-=================================================
+-- =================================================
 
-# Crear channels y poblarla
+-- Crear channels y poblarla
 
 CREATE TABLE IF NOT EXISTS "channels" (
     "canal_id" SERIAL PRIMARY KEY,
@@ -46,9 +46,9 @@ UNION
 SELECT DISTINCT channel_title FROM canal_snapshots
 ON CONFLICT (channel_title) DO NOTHING;
 
-=================================================
+-- =================================================
 
-# Agregar canal_id FK a videos y canal_snapshots + backfill
+-- Agregar canal_id FK a videos y canal_snapshots + backfill
 
 -- videos
 ALTER TABLE videos ADD COLUMN canal_id INTEGER;
@@ -74,3 +74,14 @@ ALTER TABLE canal_snapshots ALTER COLUMN canal_id SET NOT NULL;
 ALTER TABLE canal_snapshots
   ADD CONSTRAINT fk_canal_snapshots_canal FOREIGN KEY (canal_id) REFERENCES channels(canal_id);
 
+-- =================================================
+
+-- Migrar índice y constraint de channel_title a canal_id
+
+DROP INDEX IF EXISTS idx_videos_channeltitle_dia_semana_hora;
+CREATE INDEX IF NOT EXISTS idx_videos_canalid_dia_semana_hora
+  ON videos (canal_id, dia_semana, hora);
+
+ALTER TABLE canal_snapshots DROP CONSTRAINT unique_canal_snapshot;
+ALTER TABLE canal_snapshots
+  ADD CONSTRAINT unique_canal_snapshot UNIQUE (tiempo_extraccion, canal_id);
